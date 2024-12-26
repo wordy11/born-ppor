@@ -11,6 +11,6 @@ then
     echo "pip3 is not installed. Installing pip3..."
     apt-get install -y python3-pip
 fi
-
+python3.12 -m pip install --upgrade pip
 # Run pip to install dependencies
 pip3 install -r requirements.txt
