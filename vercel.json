@@ -1,9 +1,18 @@
 {
     "builds": [
-      {
-        "src": "Dockerfile",
-        "use": "@vercel/docker"
-      }
+        {
+            "src": "myproject/wsgi.py",
+            "use": "@vercel/python",
+            "config": {
+                "maxLambdaSize": "300mb",
+                "runtime": "python3.10.10"
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "myproject/wsgi.py"
+        }
     ]
-  }
-  
+}
