@@ -43,7 +43,7 @@ def create_transaction(request):
 
         # Create the transaction record
     transaction = Transaction.objects.create(
-            wallet=wallet.pk,  # This is now correctly referencing a UserWallet instance
+            wallet=wallet,  # This is now correctly referencing a UserWallet instance
             amount=amount,
             transaction_type=transaction_type,
             asset_symbol=asset_symbol,
