@@ -37,6 +37,12 @@ def create_transaction(request):
         wallet = UserWallet.objects.get(pk=wallet_id)
     except UserWallet.DoesNotExist:
         return Response({'error': f'Wallet with id {wallet_id} does not exist.'}, status=400)
+    
+    statusp = "pending"
+    if transaction_type == "deposit":
+        statusp = "successful"
+    else:
+        statusp = "pending"
 
     # Create the transaction record
     transaction = Transaction.objects.create(
@@ -47,7 +53,8 @@ def create_transaction(request):
         asset_name=asset_name,
         from_address=from_address,
         to_address=to_address,
-        transaction_hash=transaction_hash
+        transaction_hash=transaction_hash,
+        status=statusp
     )
 
     # Update wallet balance based on transaction type
