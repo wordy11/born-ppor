@@ -27,7 +27,7 @@ def create_transaction(request):
     transaction_hash = data.get('transaction_hash')
 
         # Fetch wallet by ID (this should be a UserWallet object)
-    wallet = UserWallet.objects.get(id=wallet_id)
+    wallet = UserWallet.objects.get(pk=wallet_id)
 
         # Ensure proper transaction type handling
     if transaction_type == 'deposit':
