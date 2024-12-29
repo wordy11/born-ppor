@@ -28,19 +28,6 @@ def create_transaction(request):
 
         # Fetch wallet by ID (this should be a UserWallet object)
     wallet = UserWallet.objects.get(pk=wallet_id)
-
-        # Ensure proper transaction type handling
-    if transaction_type == 'deposit':
-        wallet.balance += amount  # Increase wallet balance
-    elif transaction_type == 'withdrawal':
-        if wallet.balance >= amount:
-            wallet.balance -= amount  # Decrease wallet balance
-        else:
-            return Response({'error': 'Insufficient funds'}, status=400)
-    else:
-        return Response({'error': 'Invalid transaction type'}, status=400)
-    wallet.save()
-
         # Create the transaction record
     transaction = Transaction.objects.create(
             wallet=wallet,  # This is now correctly referencing a UserWallet instance
@@ -52,6 +39,17 @@ def create_transaction(request):
             to_address=to_address,
             transaction_hash=transaction_hash
         )
+    
+    # if transaction_type == 'deposit':
+    #     wallet.balance += amount  # Increase wallet balance
+    # elif transaction_type == 'withdrawal':
+    #     if wallet.balance >= amount:
+    #         wallet.balance -= amount  # Decrease wallet balance
+    #     else:
+    #         return Response({'error': 'Insufficient funds'}, status=400)
+    # else:
+    #     return Response({'error': 'Invalid transaction type'}, status=400)
+    # wallet.save()
     
     
 
