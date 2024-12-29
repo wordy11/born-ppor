@@ -13,6 +13,12 @@ from rest_framework.decorators import api_view
 from .models import Transaction
 from users.models import UserWallet
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from decimal import Decimal
+from users.models import UserWallet
+from .models import Transaction
+
 @api_view(['POST'])
 def create_transaction(request):
     data = request.data
@@ -26,32 +32,37 @@ def create_transaction(request):
     to_address = data.get('to_address')
     transaction_hash = data.get('transaction_hash')
 
+    try:
         # Fetch wallet by ID (this should be a UserWallet object)
-    wallet = UserWallet.objects.get(pk=wallet_id)
-        # Create the transaction record
+        wallet = UserWallet.objects.get(pk=wallet_id)
+    except UserWallet.DoesNotExist:
+        return Response({'error': f'Wallet with id {wallet_id} does not exist.'}, status=400)
+
+    # Create the transaction record
     transaction = Transaction.objects.create(
-            wallet=wallet,  # This is now correctly referencing a UserWallet instance
-            amount=amount,
-            transaction_type=transaction_type,
-            asset_symbol=asset_symbol,
-            asset_name=asset_name,
-            from_address=from_address,
-            to_address=to_address,
-            transaction_hash=transaction_hash
-        )
-    
-    # if transaction_type == 'deposit':
-    #     wallet.balance += amount  # Increase wallet balance
-    # elif transaction_type == 'withdrawal':
-    #     if wallet.balance >= amount:
-    #         wallet.balance -= amount  # Decrease wallet balance
-    #     else:
-    #         return Response({'error': 'Insufficient funds'}, status=400)
-    # else:
-    #     return Response({'error': 'Invalid transaction type'}, status=400)
-    # wallet.save()
-    
-    
+        wallet=wallet,  # This is now correctly referencing a UserWallet instance
+        amount=amount,
+        transaction_type=transaction_type,
+        asset_symbol=asset_symbol,
+        asset_name=asset_name,
+        from_address=from_address,
+        to_address=to_address,
+        transaction_hash=transaction_hash
+    )
+
+    # Update wallet balance based on transaction type
+    if transaction_type == 'deposit':
+        wallet.balance += amount  # Increase wallet balance
+    elif transaction_type == 'withdrawal':
+        if wallet.balance >= amount:
+            wallet.balance -= amount  # Decrease wallet balance
+        else:
+            return Response({'error': 'Insufficient funds'}, status=400)
+    else:
+        return Response({'error': 'Invalid transaction type'}, status=400)
+
+    # Save the updated wallet balance
+    wallet.save()
 
     return Response({'message': 'Transaction successfully created', 'transaction_id': transaction.id}, status=201)
 
