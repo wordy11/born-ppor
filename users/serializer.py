@@ -12,7 +12,8 @@ class UserPlanSerializer(serializers.ModelSerializer):
 class UserWalletSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserWallet
-        fields = ['id', 'balance', 'currency', 'created_at', 'updated_at']  # Include 'id'
+        # fields = ['id', 'balance', 'currency', 'created_at', 'updated_at']  # Include 'id'
+        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     user_wallet = UserWalletSerializer()  # Nested wallet data
